@@ -6,8 +6,6 @@ const bodyParser = require('body-parser');
 
 const PORT = 3000;
 
-var config = require('./config.js');
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,8 +24,8 @@ app.post('/padx', function(req, res) {
 		method: 'GET',
 		uri: 'https://www.googleapis.com/customsearch/v1',
 		qs: {
-			key: config.googleAPIKey,
-			cx: config.googleSearchEngineID,
+			key: process.env.GOOGLE_API_KEY,
+			cx: process.env.GOOGLE_SEARCH_ENGINE_ID,
 			q: searchParams,
 			num: 1 // return at most one result from google
 		}
