@@ -16,6 +16,10 @@ app.listen(PORT, function () {
 	console.log('Express server listening on port ' + PORT);
 });
 
+app.get('/', function(req, res) {
+	res.send("It's working!");
+});
+
 app.post('/padx', function(req, res) {
 	var searchParams = req.body.text;
 	var requestObject = {
