@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const rp = require('request-promise');
 
+const htmlScraper = require('./html-scraper.js');
+
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -39,12 +41,16 @@ app.post('/padx', function(req, res) {
 			var searchResults = body.items;
 			if (searchResults) {
 				var resultLink = searchResults[0].link;
-				returnText = 'Top result for "' + searchParams + '": ' + resultLink;
 
-				res.json({
-					response_type: "in_channel",
-					text: returnText
-				});
+				htmlScraper.getPageInfo(resultLink)
+					.then(function(pageInfo) {
+						returnText = 'Top result for "' + searchParams + '":\n' + pageInfo + ": " + resultLink;
+
+						res.json({
+							response_type: "in_channel",
+							text: returnText
+						});
+					});
 			} else {
 				returnText = "Sorry! Couldn't find any search results for " + searchParams;
 				res.json({
