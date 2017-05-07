@@ -1,8 +1,8 @@
 'use strict';
 
-const express = require('express');
-const request = require('request');
 const bodyParser = require('body-parser');
+const express = require('express');
+const rp = require('request-promise');
 
 const PORT = process.env.PORT || 3000;
 
@@ -33,10 +33,9 @@ app.post('/padx', function(req, res) {
 
 	var returnText;
 
-	request(requestObject, function(error, response, body) {
-		body = JSON.parse(body);
-
-		if (!error && response.statusCode == 200) {
+	rp(requestObject)
+		.then(function(body) {
+			body = JSON.parse(body);
 			var searchResults = body.items;
 			if (searchResults) {
 				var resultLink = searchResults[0].link;
@@ -53,13 +52,13 @@ app.post('/padx', function(req, res) {
 					text: returnText
 				});
 			}
-
-		} else {
-			returnText = 'Sorry! There was an error and I have no idea why. Please try again!';
+		})
+		.catch(function(err) {
+			console.log(err)
+			returnText = 'Sorry! There was an error and I have no idea why. Please try again!\nStacktrace: ' + err;
 			res.json({
 				response_type: "in_channel",
 				text: returnText
 			});
-		}
-	});
+		});
 });
